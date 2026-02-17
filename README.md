@@ -1,90 +1,88 @@
-# Taxonomy
+# CookWise
 
-An open source application built using the new router, server components and everything new in Next.js 13.
+**The AI-Powered Kitchen Operating System**
 
-> **Warning**
-> This app is a work in progress. I'm building this in public. You can follow the progress on Twitter [@shadcn](https://twitter.com/shadcn).
-> See the roadmap below.
+> **Note**: This project is currently in active development.
 
-## About this project
+CookWise is a centralized web application designed to digitize and automate the culinary workflow. It streamlines recipe management, pantry tracking, meal planning, and shopping list generation using AI-powered features.
 
-This project as an experiment to see how a modern app (with features like authentication, subscriptions, API routes, static pages for docs ...etc) would work in Next.js 13 and server components.
+## 🚀 Features
 
-**This is not a starter template.**
+-   **AI Recipe Parsing**: Extract ingredients and instructions from images or URLs using Google Gemini.
+-   **Smart Pantry**: Track inventory with status indicators (Low/Out) and expiration tracking.
+-   **Meal Planning**: Drag-and-drop weekly meal scheduling.
+-   **Intelligent Shopping List**: Automatically generate lists based on meal plans and pantry stock.
+-   **Multi-User**: Real-time sync for household members.
 
-A few people have asked me to turn this into a starter. I think we could do that once the new features are out of beta.
+## 🛠️ Tech Stack
 
-## Note on Performance
+-   **Framework**: [Next.js 13+](https://nextjs.org/) (App Router)
+-   **Language**: [TypeScript](https://www.typescriptlang.org/)
+-   **Runtime**: [Bun](https://bun.sh/)
+-   **Database**: [PostgreSQL](https://www.postgresql.org/)
+-   **ORM**: [Prisma](https://www.prisma.io/)
+-   **UI**: [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/)
+-   **AI**: [Google Gemini API](https://ai.google.dev/)
+-   **Auth**: [NextAuth.js](https://next-auth.js.org/)
 
-> **Warning**
-> This app is using the unstable releases for Next.js 13 and React 18. The new router and app dir is still in beta and not production-ready.
-> **Expect some performance hits when testing the dashboard**.
-> If you see something broken, you can ping me [@shadcn](https://twitter.com/shadcn).
+## 🏁 Getting Started
 
-## Features
+### Prerequisites
 
-- New `/app` dir,
-- Routing, Layouts, Nested Layouts and Layout Groups
-- Data Fetching, Caching and Mutation
-- Loading UI
-- Route handlers
-- Metadata files
-- Server and Client Components
-- API Routes and Middlewares
-- Authentication using **NextAuth.js**
-- ORM using **Prisma**
-- Database on **PlanetScale**
-- UI Components built using **Radix UI**
-- Documentation and blog using **MDX** and **Contentlayer**
-- Subscriptions using **Stripe**
-- Styled using **Tailwind CSS**
-- Validations using **Zod**
-- Written in **TypeScript**
+-   Use [Bun](https://bun.sh/) as the package manager.
+-   PostgreSQL database (local or cloud).
+-   Google Gemini API Key.
 
-## Roadmap
+### Installation
 
-- [x] ~Add MDX support for basic pages~
-- [x] ~Build marketing pages~
-- [x] ~Subscriptions using Stripe~
-- [x] ~Responsive styles~
-- [x] ~Add OG image for blog using @vercel/og~
-- [x] Dark mode
+1.  **Clone the repository:**
 
-## Known Issues
+    ```bash
+    git clone https://github.com/RohiRIK/cookwise.git
+    cd cookwise
+    ```
 
-A list of things not working right now:
+2.  **Install dependencies:**
 
-1. ~GitHub authentication (use email)~
-2. ~[Prisma: Error: ENOENT: no such file or directory, open '/var/task/.next/server/chunks/schema.prisma'](https://github.com/prisma/prisma/issues/16117)~
-3. ~[Next.js 13: Client side navigation does not update head](https://github.com/vercel/next.js/issues/42414)~
-4. [Cannot use opengraph-image.tsx inside catch-all routes](https://github.com/vercel/next.js/issues/48162)
+    ```bash
+    bun install
+    ```
 
-## Why not tRPC, Turborepo or X?
+3.  **Configure Environment:**
 
-I might add this later. For now, I want to see how far we can get using Next.js only.
+    Copy `.env.example` to `.env.local` and update the values:
 
-If you have some suggestions, feel free to create an issue.
+    ```bash
+    cp .env.example .env.local
+    ```
 
-## Running Locally
+    Ensure you set `DATABASE_URL`, `GEMINI_API_KEY`, and `NEXTAUTH_SECRET`.
 
-1. Install dependencies using pnpm:
+4.  **Database Setup:**
 
-```sh
-pnpm install
-```
+    ```bash
+    # Start your local Postgres server
+    # Run migrations
+    bunx prisma migrate dev
+    ```
 
-2. Copy `.env.example` to `.env.local` and update the variables.
+5.  **Run Development Server:**
 
-```sh
-cp .env.example .env.local
-```
+    ```bash
+    bun dev
+    ```
 
-3. Start the development server:
+    Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-```sh
-pnpm dev
-```
+## 📂 Documentation
 
-## License
+Detailed documentation is available in the `docs/` directory:
 
-Licensed under the [MIT license](https://github.com/shadcn/taxonomy/blob/main/LICENSE.md).
+-   [Product Requirements (PRD)](docs/00-PRD.md)
+-   [Database Schema](docs/01-database-schema.md)
+-   [Technical Specification](docs/02-technical-spec.md)
+-   [Development Setup](docs/06-development-setup.md)
+
+## 📄 License
+
+This project is licensed under the MIT License.
