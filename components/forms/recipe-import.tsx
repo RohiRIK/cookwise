@@ -80,7 +80,7 @@ export function RecipeImport({ onImport }: RecipeImportProps) {
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline">
-                    <ImageIcon className="mr-2 h-4 w-4" />
+                    <ImageIcon className="mr-2 size-4" />
                     Import from Image
                 </Button>
             </DialogTrigger>
@@ -110,7 +110,7 @@ export function RecipeImport({ onImport }: RecipeImportProps) {
                             <img
                                 src={preview}
                                 alt="Recipe preview"
-                                className="object-cover w-full h-full"
+                                className="size-full object-cover"
                             />
                         </div>
                     )}
@@ -127,7 +127,7 @@ export function RecipeImport({ onImport }: RecipeImportProps) {
                             onClick={handleUpload}
                             disabled={!preview || isParsing}
                         >
-                            {isParsing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {isParsing && <Loader2 className="mr-2 size-4 animate-spin" />}
                             {isParsing ? "Analyzing..." : "Import"}
                         </Button>
                     </div>
