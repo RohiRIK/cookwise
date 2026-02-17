@@ -30,7 +30,7 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
                 target="_blank"
                 rel="noreferrer"
               >
-                <Icons.gitHub className="h-7 w-7" />
+                <Icons.gitHub className="size-7" />
                 <span className="sr-only">GitHub</span>
               </Link>
             </nav>

@@ -21,7 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function DesignSystemPage() {
     return (
-        <div className="container py-10 space-y-10">
+        <div className="container space-y-10 py-10">
             <div className="space-y-4">
                 <h1 className="text-3xl font-bold tracking-tight">Design System</h1>
                 <p className="text-muted-foreground">
@@ -47,7 +47,7 @@ export default function DesignSystemPage() {
                             <Button variant="ghost">Ghost</Button>
                             <Button variant="link">Link</Button>
                         </div>
-                        <div className="flex flex-wrap gap-4 items-center">
+                        <div className="flex flex-wrap items-center gap-4">
                             <Button size="sm">Small</Button>
                             <Button size="default">Default</Button>
                             <Button size="lg">Large</Button>
@@ -97,10 +97,10 @@ export default function DesignSystemPage() {
                                 <TabsTrigger value="password">Password</TabsTrigger>
                             </TabsList>
                             <TabsContent value="account">
-                                <p className="text-sm text-muted-foreground py-4">Make changes to your account here.</p>
+                                <p className="py-4 text-sm text-muted-foreground">Make changes to your account here.</p>
                             </TabsContent>
                             <TabsContent value="password">
-                                <p className="text-sm text-muted-foreground py-4">Change your password here.</p>
+                                <p className="py-4 text-sm text-muted-foreground">Change your password here.</p>
                             </TabsContent>
                         </Tabs>
                     </CardContent>
