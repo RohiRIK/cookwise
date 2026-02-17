@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select"
 import { toast } from "@/components/ui/use-toast"
 import { createRecipe, RecipeInput } from "@/app/actions/recipe"
+import { RecipeImport } from "./recipe-import"
 
 const recipeSchema = z.object({
     title: z.string().min(2, {
@@ -80,6 +81,27 @@ export function RecipeForm() {
         name: "steps",
     })
 
+    const handleImport = (data: RecipeInput) => {
+        // Map the imported data to match the form structure
+        // The AI returns a structure that matches RecipeInput, but we need to ensure it fits FormData
+        // especially looking out for default values if they are missing
+        form.reset({
+            title: data.title,
+            description: data.description || "",
+            prepTime: data.prepTime || 0,
+            cookTime: data.cookTime || 0,
+            servings: data.servings || 4,
+            ingredients: data.ingredients.map(i => ({
+                ...i,
+                // Ensure defaults for enums if AI missed them
+                unit: i.unit as UnitType || UnitType.PIECE,
+                category: i.category as IngredientCategory || IngredientCategory.OTHER,
+                originalText: i.originalText || ""
+            })),
+            steps: data.steps.map(s => ({ value: s }))
+        })
+    }
+
     async function onSubmit(data: FormData) {
         setIsSaving(true)
 
@@ -116,235 +138,247 @@ export function RecipeForm() {
     }
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <div className="grid gap-4 md:grid-cols-2">
-                    <FormField
-                        control={form.control}
-                        name="title"
-                        render={({ field }) => (
-                            <FormItem className="col-span-2">
-                                <FormLabel>Title</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Spaghetti Carbonara" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                            <FormItem className="col-span-2">
-                                <FormLabel>Description</FormLabel>
-                                <FormControl>
-                                    <Textarea placeholder="A classic Italian pasta dish..." {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="prepTime"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Prep Time (mins)</FormLabel>
-                                <FormControl>
-                                    <Input type="number" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="cookTime"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Cook Time (mins)</FormLabel>
-                                <FormControl>
-                                    <Input type="number" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="servings"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Servings</FormLabel>
-                                <FormControl>
-                                    <Input type="number" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+        <div className="space-y-6">
+            <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                    <h2 className="text-2xl font-semibold tracking-tight">New Recipe</h2>
+                    <p className="text-sm text-muted-foreground">
+                        Add a new recipe manually or import from an image.
+                    </p>
                 </div>
+                <RecipeImport onImport={handleImport} />
+            </div>
 
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-medium">Ingredients</h3>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => appendIngredient({ name: "", quantity: 1, unit: "PIECE", category: IngredientCategory.OTHER, originalText: "" })}
-                        >
-                            <Plus className="mr-2 size-4" />
-                            Add Ingredient
-                        </Button>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <FormField
+                            control={form.control}
+                            name="title"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2">
+                                    <FormLabel>Title</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Spaghetti Carbonara" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2">
+                                    <FormLabel>Description</FormLabel>
+                                    <FormControl>
+                                        <Textarea placeholder="A classic Italian pasta dish..." {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="prepTime"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Prep Time (mins)</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="cookTime"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Cook Time (mins)</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="servings"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Servings</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </div>
-                    {ingredientFields.map((field, index) => (
-                        <div key={field.id} className="flex items-start gap-2">
-                            <FormField
-                                control={form.control}
-                                name={`ingredients.${index}.quantity`}
-                                render={({ field }) => (
-                                    <FormItem className="w-20">
-                                        <FormControl>
-                                            <Input type="number" placeholder="1" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name={`ingredients.${index}.unit`}
-                                render={({ field }) => (
-                                    <FormItem className="w-24">
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Unit" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {Object.values(UnitType).map((type) => (
-                                                    <SelectItem key={type} value={type}>
-                                                        {type.toLowerCase()}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name={`ingredients.${index}.name`}
-                                render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormControl>
-                                            <Input placeholder="Ingredient name" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name={`ingredients.${index}.category`}
-                                render={({ field }) => (
-                                    <FormItem className="w-32">
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Category" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {Object.values(IngredientCategory).map((cat) => (
-                                                    <SelectItem key={cat} value={cat}>
-                                                        {cat.toLowerCase()}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-lg font-medium">Ingredients</h3>
                             <Button
                                 type="button"
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => removeIngredient(index)}
-                                disabled={ingredientFields.length === 1}
+                                variant="outline"
+                                size="sm"
+                                onClick={() => appendIngredient({ name: "", quantity: 1, unit: "PIECE", category: IngredientCategory.OTHER, originalText: "" })}
                             >
-                                <Trash className="size-4 text-muted-foreground" />
+                                <Plus className="mr-2 size-4" />
+                                Add Ingredient
                             </Button>
                         </div>
-                    ))}
-                </div>
-
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-medium">Instructions</h3>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="icon"
-                            onClick={() => appendStep({ value: "" })}
-                        >
-                            <Plus className="size-4" />
-                        </Button>
-                    </div>
-                    {stepFields.map((field, index) => (
-                        <div key={field.id} className="flex items-start gap-2">
-                            <div className="w-6 flex-none pt-2 text-center text-sm font-medium text-muted-foreground">
-                                {index + 1}.
+                        {ingredientFields.map((field, index) => (
+                            <div key={field.id} className="flex items-start gap-2">
+                                <FormField
+                                    control={form.control}
+                                    name={`ingredients.${index}.quantity`}
+                                    render={({ field }) => (
+                                        <FormItem className="w-20">
+                                            <FormControl>
+                                                <Input type="number" placeholder="1" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name={`ingredients.${index}.unit`}
+                                    render={({ field }) => (
+                                        <FormItem className="w-24">
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Unit" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {Object.values(UnitType).map((type) => (
+                                                        <SelectItem key={type} value={type}>
+                                                            {type.toLowerCase()}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name={`ingredients.${index}.name`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex-1">
+                                            <FormControl>
+                                                <Input placeholder="Ingredient name" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name={`ingredients.${index}.category`}
+                                    render={({ field }) => (
+                                        <FormItem className="w-32">
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Category" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {Object.values(IngredientCategory).map((cat) => (
+                                                        <SelectItem key={cat} value={cat}>
+                                                            {cat.toLowerCase()}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => removeIngredient(index)}
+                                    disabled={ingredientFields.length === 1}
+                                >
+                                    <Trash className="size-4 text-muted-foreground" />
+                                </Button>
                             </div>
-                            <FormField
-                                control={form.control}
-                                name={`steps.${index}.value`}
-                                render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormControl>
-                                            <Textarea
-                                                className="min-h-10 resize-none"
-                                                placeholder={`Step ${index + 1}...`}
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                        ))}
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-lg font-medium">Instructions</h3>
                             <Button
                                 type="button"
-                                variant="ghost"
+                                variant="outline"
                                 size="icon"
-                                onClick={() => removeStep(index)}
-                                disabled={stepFields.length === 1}
+                                onClick={() => appendStep({ value: "" })}
                             >
-                                <Trash className="size-4 text-muted-foreground" />
+                                <Plus className="size-4" />
                             </Button>
                         </div>
-                    ))}
-                </div>
+                        {stepFields.map((field, index) => (
+                            <div key={field.id} className="flex items-start gap-2">
+                                <div className="w-6 flex-none pt-2 text-center text-sm font-medium text-muted-foreground">
+                                    {index + 1}.
+                                </div>
+                                <FormField
+                                    control={form.control}
+                                    name={`steps.${index}.value`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex-1">
+                                            <FormControl>
+                                                <Textarea
+                                                    className="min-h-10 resize-none"
+                                                    placeholder={`Step ${index + 1}...`}
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => removeStep(index)}
+                                    disabled={stepFields.length === 1}
+                                >
+                                    <Trash className="size-4 text-muted-foreground" />
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
 
-                <div className="flex justify-end gap-4">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => router.back()}
-                        disabled={isSaving}
-                    >
-                        Cancel
-                    </Button>
-                    <Button type="submit" disabled={isSaving}>
-                        {isSaving && <Loader2 className="mr-2 size-4 animate-spin" />}
-                        Create Recipe
-                    </Button>
-                </div>
-            </form>
-        </Form>
+                    <div className="flex justify-end gap-4">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => router.back()}
+                            disabled={isSaving}
+                        >
+                            Cancel
+                        </Button>
+                        <Button type="submit" disabled={isSaving}>
+                            {isSaving && <Loader2 className="mr-2 size-4 animate-spin" />}
+                            Create Recipe
+                        </Button>
+                    </div>
+                </form>
+            </Form>
+        </div>
     )
 }
