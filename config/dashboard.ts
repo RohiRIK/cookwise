@@ -37,6 +37,11 @@ export const dashboardConfig: DashboardConfig = {
       icon: "billing",
     },
     {
+      title: "Cook",
+      href: "/dashboard/cook",
+      icon: "pizza", // Using pizza as a placeholder for cooking/chef hat
+    },
+    {
       title: "Settings",
       href: "/dashboard/settings",
       icon: "settings",
