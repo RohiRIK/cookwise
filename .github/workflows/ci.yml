@@ -27,6 +27,9 @@ jobs:
         env:
           SKIP_ENV_VALIDATION: true
 
+      - name: Build Contentlayer
+        run: bunx contentlayer build
+
       - name: Type Check
         run: bun run type-check
 
