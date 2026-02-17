@@ -24,6 +24,14 @@ export const dashboardConfig: DashboardConfig = {
       icon: "pizza",
     },
     {
+      title: "Pantry",
+      href: "/dashboard/pantry",
+      icon: "post", // Using 'post' as a placeholder or maybe 'package' if available? 'post' is generic file-text like.
+      // Let's check icons available.
+      // In icons.tsx, we have 'post', 'page', 'media', 'settings', 'billing', 'ellipsis', 'add', 'warning', 'user', 'arrowRight', 'laptop', 'moon', 'sun', 'pizza'.
+      // I'll stick to 'post' or maybe add a 'package' icon later.
+    },
+    {
       title: "Billing",
       href: "/dashboard/billing",
       icon: "billing",
