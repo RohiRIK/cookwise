@@ -58,10 +58,16 @@ model User {
   householdId String?
   household   Household? @relation(fields: [householdId], references: [id])
 
-  stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
-  stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
-  stripePriceId          String?   @map(name: "stripe_price_id")
-  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
+  recipes       Recipe[]
+  pantryItems   PantryItem[]
+  mealPlans     MealPlan[]
+  shoppingLists ShoppingList[]
+
+  stripeCustomerId       String?            @unique @map(name: "stripe_customer_id")
+  stripeSubscriptionId   String?            @unique @map(name: "stripe_subscription_id")
+  stripePriceId          String?            @map(name: "stripe_price_id")
+  stripeCurrentPeriodEnd DateTime?          @map(name: "stripe_current_period_end")
+  shoppingListItems      ShoppingListItem[]
 
   @@map(name: "users")
 }
@@ -73,6 +79,11 @@ model Household {
   updatedAt DateTime @default(now()) @map(name: "updated_at")
 
   users User[]
+
+  recipes       Recipe[]
+  pantryItems   PantryItem[]
+  mealPlans     MealPlan[]
+  shoppingLists ShoppingList[]
 
   @@map(name: "households")
 }
@@ -98,4 +109,220 @@ model Post {
   author User @relation(fields: [authorId], references: [id])
 
   @@map(name: "posts")
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
+enum PantryStatus {
+  IN_STOCK
+  LOW
+  OUT
+}
+
+enum RecipeSourceType {
+  MANUAL
+  OCR_IMAGE
+  OCR_PDF
+  URL_SCRAPER
+  IMPORT
+}
+
+enum IngredientCategory {
+  PRODUCE
+  DAIRY
+  MEAT
+  SEAFOOD
+  GRAINS
+  CANNED
+  SPICES
+  OILS
+  BAKING
+  BEVERAGES
+  FROZEN
+  CONDIMENTS
+  OTHER
+}
+
+enum UnitType {
+  PIECE
+  GRAM
+  KILOGRAM
+  MILLILITER
+  LITER
+  CUP
+  TABLESPOON
+  TEASPOON
+  OUNCE
+  POUND
+  PINCH
+  TO_TASTE
+}
+
+model Recipe {
+  id          String           @id @default(cuid())
+  title       String
+  description String?
+  sourceType  RecipeSourceType
+  sourceUrl   String?
+  prepTime    Int?
+  cookTime    Int?
+  servings    Int              @default(4)
+  difficulty  String?
+  tags        String[]
+  rating      Int?
+  notes       String?
+  imageUrl    String?
+  householdId String?
+  creatorId   String?
+  createdAt   DateTime         @default(now()) @map(name: "created_at")
+  updatedAt   DateTime         @default(now()) @map(name: "updated_at")
+
+  household Household? @relation(fields: [householdId], references: [id])
+  creator   User?      @relation(fields: [creatorId], references: [id])
+
+  ingredients       RecipeIngredient[]
+  steps             InstructionStep[]
+  mealPlans         MealPlan[]
+  shoppingListItems ShoppingListItem[]
+
+  @@map(name: "recipes")
+}
+
+model Ingredient {
+  id        String             @id @default(cuid())
+  name      String             @unique
+  category  IngredientCategory
+  createdAt DateTime           @default(now()) @map(name: "created_at")
+  updatedAt DateTime           @default(now()) @map(name: "updated_at")
+
+  recipeIngredients RecipeIngredient[]
+  pantryItems       PantryItem[]
+  shoppingListItems ShoppingListItem[]
+
+  @@map(name: "ingredients")
+}
+
+model RecipeIngredient {
+  id           String   @id @default(cuid())
+  recipeId     String
+  ingredientId String
+  quantity     Float
+  unit         UnitType
+  originalText String
+  notes        String?
+  createdAt    DateTime @default(now()) @map(name: "created_at")
+  updatedAt    DateTime @default(now()) @map(name: "updated_at")
+
+  recipe     Recipe     @relation(fields: [recipeId], references: [id])
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@map(name: "recipe_ingredients")
+}
+
+model InstructionStep {
+  id          String   @id @default(cuid())
+  recipeId    String
+  stepNumber  Int
+  instruction String
+  imageUrl    String?
+  createdAt   DateTime @default(now()) @map(name: "created_at")
+  updatedAt   DateTime @default(now()) @map(name: "updated_at")
+
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+
+  @@map(name: "instruction_steps")
+}
+
+model PantryItem {
+  id           String       @id @default(cuid())
+  ingredientId String
+  householdId  String?
+  quantity     Float
+  unit         UnitType
+  minQuantity  Float
+  status       PantryStatus
+  expiryDate   DateTime?
+  location     String?
+  notes        String?
+  userId       String?
+  createdAt    DateTime     @default(now()) @map(name: "created_at")
+  updatedAt    DateTime     @default(now()) @map(name: "updated_at")
+
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  household  Household? @relation(fields: [householdId], references: [id])
+  user       User?      @relation(fields: [userId], references: [id])
+
+  @@unique([householdId, ingredientId])
+  @@map(name: "pantry_items")
+}
+
+model MealPlan {
+  id          String    @id @default(cuid())
+  recipeId    String
+  householdId String?
+  userId      String?
+  date        DateTime
+  mealType    MealType
+  servings    Int
+  notes       String?
+  isCooked    Boolean   @default(false)
+  cookedAt    DateTime?
+  createdAt   DateTime  @default(now()) @map(name: "created_at")
+  updatedAt   DateTime  @default(now()) @map(name: "updated_at")
+
+  recipe    Recipe     @relation(fields: [recipeId], references: [id])
+  household Household? @relation(fields: [householdId], references: [id])
+  user      User?      @relation(fields: [userId], references: [id])
+
+  @@unique([householdId, recipeId, date, mealType])
+  @@map(name: "meal_plans")
+}
+
+model ShoppingList {
+  id          String   @id @default(cuid())
+  householdId String?
+  userId      String?
+  name        String   @default("Weekly List")
+  weekOf      DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map(name: "created_at")
+  updatedAt   DateTime @default(now()) @map(name: "updated_at")
+
+  household Household? @relation(fields: [householdId], references: [id])
+  user      User?      @relation(fields: [userId], references: [id])
+
+  items ShoppingListItem[]
+
+  @@map(name: "shopping_lists")
+}
+
+model ShoppingListItem {
+  id              String             @id @default(cuid())
+  shoppingListId  String
+  ingredientId    String?
+  name            String
+  quantity        Float
+  unit            UnitType
+  category        IngredientCategory
+  aisle           String?
+  estimatedPrice  Float?
+  isChecked       Boolean            @default(false) @map(name: "is_checked")
+  checkedAt       DateTime?
+  checkedByUserId String?
+  notes           String?
+  recipeId        String?
+  createdAt       DateTime           @default(now()) @map(name: "created_at")
+  updatedAt       DateTime           @default(now()) @map(name: "updated_at")
+
+  shoppingList  ShoppingList @relation(fields: [shoppingListId], references: [id])
+  ingredient    Ingredient?  @relation(fields: [ingredientId], references: [id])
+  recipe        Recipe?      @relation(fields: [recipeId], references: [id])
+  checkedByUser User?        @relation(fields: [checkedByUserId], references: [id])
+
+  @@map(name: "shopping_list_items")
 }

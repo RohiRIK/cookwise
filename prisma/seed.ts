@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client"
+import { seedRecipes } from "./seed-recipes"
 
 const prisma = new PrismaClient()
 
@@ -17,13 +18,16 @@ async function main() {
     })
 
     // create user
-    await prisma.user.create({
+    const user = await prisma.user.create({
         data: {
             email: userEmail,
             name: "Test User",
             householdId: household.id,
         },
     })
+
+    // seed recipes
+    await seedRecipes(household.id, user.id)
 
     console.log("Seeding completed.")
 }
