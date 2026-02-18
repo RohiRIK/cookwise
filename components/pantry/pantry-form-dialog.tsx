@@ -4,7 +4,7 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Loader2 } from "lucide-react"
+import { Loader2, QrCode } from "lucide-react"
 import { PantryItem, Ingredient, UnitType } from "@prisma/client"
 import { useRouter } from "next/navigation"
 
@@ -35,7 +35,9 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { addPantryItem, updatePantryItem, PantryItemInput } from "@/app/actions/pantry"
+import { lookupProduct } from "@/app/actions/product-lookup"
 import { toast } from "@/components/ui/use-toast"
+import { BarcodeScanner } from "./barcode-scanner"
 
 // We need a separate schema for the form because ingredientId might be input directly or selected
 // For now, let's assume we simulate ingredient selection by just typing name (for MVP) 
@@ -101,6 +103,7 @@ interface PantryFormDialogProps {
 export function PantryFormDialog({ open, onOpenChange, item, ingredients = [] }: PantryFormDialogProps) {
     const router = useRouter()
     const [isSaving, setIsSaving] = React.useState(false)
+    const [isScanning, setIsScanning] = React.useState(false)
 
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -186,14 +189,93 @@ export function PantryFormDialog({ open, onOpenChange, item, ingredients = [] }:
         }
     }
 
+    const handleScan = async (barcode: string) => {
+        setIsScanning(false)
+        toast({
+            title: "Product Scanned",
+            description: "Looking up product details...",
+        })
+
+        const result = await lookupProduct(barcode)
+
+        if (!result.success || !result.data) {
+            toast({
+                title: "Product Not Found",
+                description: result.error || "Could not find details for this barcode.",
+                variant: "destructive"
+            })
+            return
+        }
+
+        const product = result.data
+
+        // Pre-fill form
+        // Note: For ingredients, currently we only support selecting existing ones by ID in the Select
+        // Ideally we should allow creating new ingredients or matching by name.
+        // For now, let's look if we have an ingredient with this name? 
+        // Or just set the form values and let user handle the rest? 
+        // Since `ingredientId` is required and must be an ID, we can't just put the name there.
+        // But we didn't implement "Create Ingredient" flow yet.
+        // 
+        // WORKAROUND: We will match by name if possible, otherwise show a toast saying "Select Ingredient"
+        // and we put the name in "Notes" or just alert the user.
+
+        // Let's see if we can match:
+        const matchedIngredient = ingredients.find(i => i.name.toLowerCase() === product.name.toLowerCase())
+
+        if (matchedIngredient) {
+            form.setValue("ingredientId", matchedIngredient.id)
+        } else {
+            toast({
+                title: "Ingredient Not Found in DB",
+                description: `Found "${product.name}". Please select the closest ingredient or create a new one (not implemented yet).`,
+            })
+            // Create a temporary "note" or just rely on user. 
+            // We can perhaps auto-select "Other" if it exists? No.
+        }
+
+        if (product.quantity) form.setValue("quantity", product.quantity)
+        if (product.unit) {
+            // Basic mapping
+            const unitMap: Record<string, UnitType> = {
+                'g': UnitType.GRAM,
+                'kg': UnitType.KILOGRAM,
+                'ml': UnitType.MILLILITER,
+                'l': UnitType.LITER,
+                'oz': UnitType.OUNCE,
+                'lb': UnitType.POUND,
+            }
+            if (unitMap[product.unit.toLowerCase()]) {
+                form.setValue("unit", unitMap[product.unit.toLowerCase()])
+            }
+        }
+    }
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
+            {isScanning && (
+                <BarcodeScanner
+                    onScan={handleScan}
+                    onClose={() => setIsScanning(false)}
+                />
+            )}
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>{item ? "Edit Pantry Item" : "Add Pantry Item"}</DialogTitle>
                     <DialogDescription>
                         {item ? "Update the details of your pantry item." : "Add a new item to your pantry inventory."}
                     </DialogDescription>
+                    {!item && (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-2 w-full"
+                            onClick={() => setIsScanning(true)}
+                        >
+                            <QrCode className="mr-2 size-4" />
+                            Scan Barcode
+                        </Button>
+                    )}
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

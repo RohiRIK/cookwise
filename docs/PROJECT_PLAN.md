@@ -66,7 +66,7 @@
 |:-------:|-----------|--------------|--------------------|
 | P3-T1 | **Pantry Schema & API** | Prisma | PantryItem model with expiration and status logic. |
 | P3-T2 | **Inventory Dashboard** | Recoil / Zustand | Real-time view of stock levels with optimistic updates. |
-| P3-T3 | **Barcode Scanner** | QuaggaJS / API | Scan barcode -> fetch product metadata. |
+| P3-T3 | **Barcode Scanner** | QuaggaJS / API | Scan barcode -> fetch product metadata. (Done via `@yudiel/react-qr-scanner`) |
 | P3-T4 | **Recipe-Pantry Matching** | Logic | "Can I cook this?" indicator based on stock. |
 
 **Design Rule**: Audit pantry dashboard using `web-design-guidelines` for accessibility of status indicators.
