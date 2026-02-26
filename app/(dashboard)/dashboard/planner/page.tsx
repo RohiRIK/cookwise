@@ -174,7 +174,9 @@ export default function PlannerPage() {
                         <div className="opacity-80 rotate-3 cursor-grabbing w-[200px]">
                             <Card className="p-2 flex items-center gap-2 shadow-xl border-primary/50 bg-background">
                                 {activeDragItem.imageUrl && (
-                                    <img src={activeDragItem.imageUrl} className="w-8 h-8 rounded bg-muted object-cover" />
+                                    <>
+                                        <img src={activeDragItem.imageUrl} alt="" className="w-8 h-8 rounded bg-muted object-cover" />
+                                    </>
                                 )}
                                 <span className="text-sm font-medium line-clamp-1">{activeDragItem.title}</span>
                             </Card>

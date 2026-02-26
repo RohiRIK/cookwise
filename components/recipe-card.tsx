@@ -16,7 +16,6 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
             <div className="relative aspect-video w-full bg-muted">
                 {/* Placeholder for now, replace with next/image when imageUrl is real */}
                 {recipe.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
                     <Image
                         src={recipe.imageUrl}
                         alt={recipe.title}

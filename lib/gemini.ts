@@ -2,6 +2,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai"
 
 import { env } from "@/env.mjs"
 
-const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY)
+export function getGeminiModel(apiKey?: string | null) {
+    const keyToUse = apiKey || env.GEMINI_API_KEY
+    if (!keyToUse) {
+        throw new Error("Missing Gemini API Key. Please add it in Settings or .env")
+    }
 
-export const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+    const genAI = new GoogleGenerativeAI(keyToUse)
+    return genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+}

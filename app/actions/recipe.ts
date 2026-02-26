@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth"
 
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { geminiModel } from "@/lib/gemini"
+import { getGeminiModel } from "@/lib/gemini"
 import { z } from "zod"
 import { IngredientCategory, RecipeSourceType, UnitType } from "@prisma/client"
 
@@ -63,6 +63,13 @@ export async function parseRecipeImage(formData: FormData) {
       }
       If unit or category is unclear, make a best guess or use defaults.`,
         ]
+
+        const session = await getServerSession(authOptions)
+        const user = session?.user?.id
+            ? await db.user.findUnique({ where: { id: session.user.id }, select: { geminiApiKey: true } })
+            : null
+
+        const geminiModel = getGeminiModel(user?.geminiApiKey)
 
         const result = await geminiModel.generateContent(items)
         const response = await result.response
@@ -147,6 +154,13 @@ Only return valid JSON, no markdown code fences.
 
 Web page text:
 ${textContent}`
+
+        const session = await getServerSession(authOptions)
+        const user = session?.user?.id
+            ? await db.user.findUnique({ where: { id: session.user.id }, select: { geminiApiKey: true } })
+            : null
+
+        const geminiModel = getGeminiModel(user?.geminiApiKey)
 
         const result = await geminiModel.generateContent(prompt)
         const aiResponse = await result.response

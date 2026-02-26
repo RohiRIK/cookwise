@@ -80,7 +80,7 @@ export function ShoppingListView({ list }: ShoppingListViewProps) {
                     <CardContent className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
                         <ShoppingCart className="h-12 w-12 mb-4 opacity-20" />
                         <p>Your shopping list is empty.</p>
-                        <p className="text-sm">Plan some meals and click "Generate" to get started.</p>
+                        <p className="text-sm">Plan some meals and click &ldquo;Generate&rdquo; to get started.</p>
                     </CardContent>
                 </Card>
             ) : (

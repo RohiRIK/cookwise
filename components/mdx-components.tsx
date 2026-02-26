@@ -161,6 +161,7 @@ export function Mdx({ code }: MdxProps) {
 
   return (
     <div className="mdx">
+      {/* eslint-disable-next-line react-hooks/static-components */}
       <Component components={components} />
     </div>
   )

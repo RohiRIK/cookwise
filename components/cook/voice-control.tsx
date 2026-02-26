@@ -10,13 +10,9 @@ interface VoiceControlProps {
 
 export function VoiceControl({ text }: VoiceControlProps) {
     const [speaking, setSpeaking] = useState(false)
-    const [supported, setSupported] = useState(false)
-
-    useEffect(() => {
-        if ('speechSynthesis' in window) {
-            setSupported(true)
-        }
-    }, [])
+    const [supported] = useState(
+        typeof window !== "undefined" && "speechSynthesis" in window
+    )
 
     const speak = () => {
         if (!supported) return
