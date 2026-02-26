@@ -34,6 +34,14 @@
     --ring: 215 20.2% 65.1%;
 
     --radius: 0.5rem;
+
+    /* Kitchen theme colors */
+    --kitchen: 142 76% 36%;
+    --kitchen-foreground: 355 100% 100%;
+
+    --pantry-low: 38 92% 50%;
+    --pantry-out: 0 84% 60%;
+    --pantry-in: 142 76% 36%;
   }
 
   .dark {
@@ -67,6 +75,14 @@
     --ring: 216 34% 17%;
 
     --radius: 0.5rem;
+
+    /* Kitchen theme colors */
+    --kitchen: 142 76% 36%;
+    --kitchen-foreground: 355 100% 100%;
+
+    --pantry-low: 38 92% 50%;
+    --pantry-out: 0 84% 60%;
+    --pantry-in: 142 76% 36%;
   }
 }
 
@@ -74,8 +90,66 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+/* Landing page animations */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px hsl(142 76% 36% / 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 32px hsl(142 76% 36% / 0.5);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 3s ease-in-out 0.5s infinite;
+}
+
+.animate-float-slow {
+  animation: float 4s ease-in-out 1s infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out both;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }

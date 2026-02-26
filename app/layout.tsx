@@ -1,3 +1,4 @@
+import type { Metadata, Viewport } from "next"
 import { Inter as FontSans } from "next/font/google"
 import localFont from "next/font/local"
 
@@ -24,30 +25,28 @@ interface RootLayoutProps {
   children: React.ReactNode
 }
 
-export const metadata = {
+export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
   keywords: [
-    "Next.js",
-    "React",
-    "Tailwind CSS",
-    "Server Components",
-    "Radix UI",
+    "kitchen management",
+    "recipe manager",
+    "meal planner",
+    "pantry tracker",
+    "shopping list",
+    "AI recipe scanner",
+    "cooking app",
   ],
   authors: [
     {
-      name: "shadcn",
-      url: "https://shadcn.com",
+      name: "CookWise Team",
+      url: "https://cookwise.io",
     },
   ],
-  creator: "shadcn",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
+  creator: "CookWise",
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -61,7 +60,7 @@ export const metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     images: [`${siteConfig.url}/og.jpg`],
-    creator: "@shadcn",
+    creator: "@cookwise",
   },
   icons: {
     icon: "/favicon.ico",
@@ -69,6 +68,13 @@ export const metadata = {
     apple: "/apple-touch-icon.png",
   },
   manifest: `${siteConfig.url}/site.webmanifest`,
+}
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {

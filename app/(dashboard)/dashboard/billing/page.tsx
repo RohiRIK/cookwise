@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 
 import { authOptions } from "@/lib/auth"
@@ -17,7 +18,7 @@ import { DashboardHeader } from "@/components/header"
 import { Icons } from "@/components/icons"
 import { DashboardShell } from "@/components/shell"
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Billing",
   description: "Manage billing and your subscription plan.",
 }
@@ -51,7 +52,7 @@ export default async function BillingPage() {
           <Icons.warning />
           <AlertTitle>This is a demo app.</AlertTitle>
           <AlertDescription>
-            Taxonomy app is a demo app using a Stripe test environment. You can
+            CookWise is a demo app using a Stripe test environment. You can
             find a list of test card numbers on the{" "}
             <a
               href="https://stripe.com/docs/testing#cards"
