@@ -1,8 +1,7 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { NextAuthOptions } from "next-auth"
-import EmailProvider from "next-auth/providers/email"
-import GitHubProvider from "next-auth/providers/github"
-import GoogleProvider from "next-auth/providers/google"
+import CredentialsProvider from "next-auth/providers/credentials"
+import { compare } from "bcryptjs"
 import { Client } from "postmark"
 
 
@@ -10,11 +9,13 @@ import { env } from "@/env.mjs"
 import { siteConfig } from "@/config/site"
 import { db } from "@/lib/db"
 
-const postmarkClient = new Client(env.POSTMARK_API_TOKEN)
+// Prevent crash in dev/build if POSTMARK_API_TOKEN is missing
+const postmarkClient = new Client(env.POSTMARK_API_TOKEN || "mock_token")
 
 export const authOptions: NextAuthOptions = {
   // huh any! I know.
   // This is a temporary fix for prisma client.
+  // @see https://github.com/prisma/prisma/issues/16117
   // @see https://github.com/prisma/prisma/issues/16117
   adapter: PrismaAdapter(db as any),
   session: {
@@ -24,69 +25,69 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   providers: [
-    GitHubProvider({
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
-    }),
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
-    EmailProvider({
-      from: env.SMTP_FROM,
-      sendVerificationRequest: async ({ identifier, url, provider }) => {
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Invalid credentials")
+        }
+
         const user = await db.user.findUnique({
           where: {
-            email: identifier,
-          },
-          select: {
-            emailVerified: true,
-          },
+            email: credentials.email
+          }
         })
 
-        const templateId = user?.emailVerified
-          ? env.POSTMARK_SIGN_IN_TEMPLATE
-          : env.POSTMARK_ACTIVATION_TEMPLATE
-        if (!templateId) {
-          throw new Error("Missing template id")
+        if (!user || !user.password) {
+          throw new Error("Invalid credentials")
         }
 
-        const result = await postmarkClient.sendEmailWithTemplate({
-          TemplateId: parseInt(templateId),
-          To: identifier,
-          From: provider.from as string,
-          TemplateModel: {
-            action_url: url,
-            product_name: siteConfig.name,
-          },
-          Headers: [
-            {
-              // Set this to prevent Gmail from threading emails.
-              // See https://stackoverflow.com/questions/23434110/force-emails-not-to-be-grouped-into-conversations/25435722.
-              Name: "X-Entity-Ref-ID",
-              Value: new Date().getTime() + "",
-            },
-          ],
-        })
+        const isValid = await compare(credentials.password, user.password)
 
-        if (result.ErrorCode) {
-          throw new Error(result.Message)
+        if (!isValid) {
+          throw new Error("Invalid credentials")
         }
-      },
-    }),
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          householdId: user.householdId,
+        }
+      }
+    })
   ],
   callbacks: {
     async session({ token, session }) {
-      if (token) {
+      if (token && session.user) {
         session.user.id = token.id
         session.user.name = token.name
         session.user.email = token.email
         session.user.image = token.picture
+        session.user.householdId = token.householdId as string | null
       }
 
       return session
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === "update" && session?.user) {
+        return { ...token, ...session.user }
+      }
+
+      if (user) {
+        return {
+          ...token,
+          id: (user as any).id,
+          picture: user.image,
+          householdId: (user as any).householdId,
+        }
+      }
+
       const dbUser = await db.user.findFirst({
         where: {
           email: token.email,
@@ -94,9 +95,7 @@ export const authOptions: NextAuthOptions = {
       })
 
       if (!dbUser) {
-        if (user) {
-          token.id = user?.id
-        }
+
         return token
       }
 
@@ -105,6 +104,7 @@ export const authOptions: NextAuthOptions = {
         name: dbUser.name,
         email: dbUser.email,
         picture: dbUser.image,
+        householdId: dbUser.householdId,
       }
     },
   },
