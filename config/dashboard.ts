@@ -14,9 +14,9 @@ export const dashboardConfig: DashboardConfig = {
   ],
   sidebarNav: [
     {
-      title: "Posts",
+      title: "Overview",
       href: "/dashboard",
-      icon: "post",
+      icon: "laptop",
     },
     {
       title: "Recipes",
@@ -26,20 +26,27 @@ export const dashboardConfig: DashboardConfig = {
     {
       title: "Pantry",
       href: "/dashboard/pantry",
-      icon: "post", // Using 'post' as a placeholder or maybe 'package' if available? 'post' is generic file-text like.
-      // Let's check icons available.
-      // In icons.tsx, we have 'post', 'page', 'media', 'settings', 'billing', 'ellipsis', 'add', 'warning', 'user', 'arrowRight', 'laptop', 'moon', 'sun', 'pizza'.
-      // I'll stick to 'post' or maybe add a 'package' icon later.
+      icon: "listChecks",
+    },
+    {
+      title: "Planner",
+      href: "/dashboard/planner",
+      icon: "calendar",
+    },
+    {
+      title: "Shopping",
+      href: "/dashboard/shopping",
+      icon: "shopping",
+    },
+    {
+      title: "What to Cook",
+      href: "/dashboard/cook",
+      icon: "chefHat",
     },
     {
       title: "Billing",
       href: "/dashboard/billing",
       icon: "billing",
-    },
-    {
-      title: "Cook",
-      href: "/dashboard/cook",
-      icon: "pizza", // Using pizza as a placeholder for cooking/chef hat
     },
     {
       title: "Settings",
