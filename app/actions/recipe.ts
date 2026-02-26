@@ -85,6 +85,87 @@ export async function parseRecipeImage(formData: FormData) {
     }
 }
 
+export async function parseRecipeUrl(url: string) {
+    try {
+        if (!url || !url.startsWith("http")) {
+            throw new Error("Please provide a valid URL")
+        }
+
+        // Fetch the page HTML
+        const response = await fetch(url, {
+            headers: {
+                "User-Agent":
+                    "Mozilla/5.0 (compatible; CookWise/1.0; +https://cookwise.io)",
+                Accept: "text/html",
+            },
+            signal: AbortSignal.timeout(10000),
+        })
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch URL: ${response.status}`)
+        }
+
+        const html = await response.text()
+
+        // Strip HTML to text — remove scripts, styles, nav, footer, ads
+        const textContent = html
+            .replace(/<script[\s\S]*?<\/script>/gi, "")
+            .replace(/<style[\s\S]*?<\/style>/gi, "")
+            .replace(/<nav[\s\S]*?<\/nav>/gi, "")
+            .replace(/<footer[\s\S]*?<\/footer>/gi, "")
+            .replace(/<header[\s\S]*?<\/header>/gi, "")
+            .replace(/<aside[\s\S]*?<\/aside>/gi, "")
+            .replace(/<[^>]+>/g, " ")
+            .replace(/&nbsp;/g, " ")
+            .replace(/&amp;/g, "&")
+            .replace(/&lt;/g, "<")
+            .replace(/&gt;/g, ">")
+            .replace(/&#\d+;/g, "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, 8000) // Limit to avoid token overflow
+
+        const prompt = `Extract recipe data from this web page text in JSON format.
+The JSON should match this schema:
+{
+  title: string,
+  description?: string,
+  prepTime?: number (minutes),
+  cookTime?: number (minutes),
+  servings?: number,
+  ingredients: {
+    name: string,
+    quantity: number,
+    unit: string (e.g. GRAM, CUP, PIECE, TABLESPOON, TEASPOON, KILOGRAM, MILLILITER, LITER, OUNCE, POUND, PINCH, TO_TASTE),
+    originalText: string,
+    category: string (one of: ${Object.keys(IngredientCategory).join(", ")})
+  }[],
+  steps: string[]
+}
+If unit or category is unclear, make a best guess or use defaults.
+Only return valid JSON, no markdown code fences.
+
+Web page text:
+${textContent}`
+
+        const result = await geminiModel.generateContent(prompt)
+        const aiResponse = await result.response
+        const text = aiResponse.text()
+
+        // Clean up markdown code blocks if present
+        const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim()
+        const json = JSON.parse(cleanedText)
+        const parsedRecipe = recipeSchema.parse(json)
+
+        return { success: true, data: parsedRecipe }
+    } catch (error) {
+        console.error("Error parsing recipe URL:", error)
+        const message =
+            error instanceof Error ? error.message : "Failed to parse recipe URL"
+        return { success: false, error: message }
+    }
+}
+
 export async function createRecipe(data: RecipeInput) {
     const session = await getServerSession(authOptions)
 

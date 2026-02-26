@@ -143,7 +143,7 @@ export function RecipeForm() {
                 <div className="space-y-1">
                     <h2 className="text-2xl font-semibold tracking-tight">New Recipe</h2>
                     <p className="text-sm text-muted-foreground">
-                        Add a new recipe manually or import from an image.
+                        Add a new recipe manually, import from a URL, or scan an image.
                     </p>
                 </div>
                 <RecipeImport onImport={handleImport} />
