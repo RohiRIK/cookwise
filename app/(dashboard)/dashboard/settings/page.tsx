@@ -7,7 +7,7 @@ import { db } from "@/lib/db"
 import { DashboardHeader } from "@/components/header"
 import { DashboardShell } from "@/components/shell"
 import { UserNameForm } from "@/components/user-name-form"
-import { UserGeminiForm } from "@/components/user-gemini-form"
+import { UserLlmForm } from "@/components/user-llm-form"
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -23,7 +23,17 @@ export default async function SettingsPage() {
 
   const user = await db.user.findUnique({
     where: { id: sessionUser.id },
-    select: { id: true, name: true, geminiApiKey: true },
+    select: {
+      id: true,
+      name: true,
+      llmProvider: true,
+      geminiApiKey: true,
+      geminiModel: true,
+      openaiApiKey: true,
+      openaiModel: true,
+      anthropicApiKey: true,
+      anthropicModel: true,
+    },
   })
 
   if (!user) {
@@ -38,7 +48,7 @@ export default async function SettingsPage() {
       />
       <div className="grid gap-10">
         <UserNameForm user={{ id: user.id, name: user.name || "" }} />
-        <UserGeminiForm user={{ id: user.id, geminiApiKey: user.geminiApiKey }} />
+        <UserLlmForm user={user} />
       </div>
     </DashboardShell>
   )

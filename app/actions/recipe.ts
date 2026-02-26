@@ -4,7 +4,8 @@ import { getServerSession } from "next-auth"
 
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { getGeminiModel } from "@/lib/gemini"
+import { getLLMClient } from "@/lib/llm"
+import { generateObject } from "ai"
 import { z } from "zod"
 import { IngredientCategory, RecipeSourceType, UnitType } from "@prisma/client"
 
@@ -37,55 +38,34 @@ export async function parseRecipeImage(formData: FormData) {
         const buffer = Buffer.from(arrayBuffer)
         const base64Image = buffer.toString("base64")
 
-        const items = [
-            {
-                inlineData: {
-                    data: base64Image,
-                    mimeType: file.type,
-                },
-            },
-            `Extract recipe data from this image in JSON format. 
-      The JSON should match this schema: 
-      { 
-        title: string, 
-        description?: string, 
-        prepTime?: number (minutes), 
-        cookTime?: number (minutes), 
-        servings?: number, 
-        ingredients: { 
-          name: string, 
-          quantity: number, 
-          unit: string (e.g. GRAM, CUP, PIECE, TABLESPOON, etc. match UnitType enum if possible), 
-          originalText: string,
-          category: string (one of: ${Object.keys(IngredientCategory).join(", ")})
-        }[], 
-        steps: string[] 
-      }
-      If unit or category is unclear, make a best guess or use defaults.`,
-        ]
-
         const session = await getServerSession(authOptions)
         const user = session?.user?.id
-            ? await db.user.findUnique({ where: { id: session.user.id }, select: { geminiApiKey: true } })
+            ? await db.user.findUnique({
+                where: { id: session.user.id },
+                select: { llmProvider: true, geminiApiKey: true, geminiModel: true, openaiApiKey: true, openaiModel: true, anthropicApiKey: true, anthropicModel: true }
+            })
             : null
 
-        const geminiModel = getGeminiModel(user?.geminiApiKey)
+        const llmClient = getLLMClient({
+            provider: (user?.llmProvider as any) || "gemini",
+            ...user
+        })
 
-        const result = await geminiModel.generateContent(items)
-        const response = await result.response
-        const text = response.text()
+        const { object } = await generateObject({
+            model: llmClient,
+            schema: recipeSchema,
+            messages: [
+                {
+                    role: "user",
+                    content: [
+                        { type: "text", text: "Extract recipe data from this image. If unit or category is unclear, make a best guess or use defaults." },
+                        { type: "image", image: arrayBuffer }
+                    ]
+                }
+            ]
+        })
 
-        // Clean up markdown code blocks if present
-        const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim()
-
-        const json = JSON.parse(cleanedText)
-
-        // Normalize units and categories if needed (sanity check)
-        // The Zod schema will validate, but we might want to be lenient with units in a real app
-
-        const parsedRecipe = recipeSchema.parse(json)
-
-        return { success: true, data: parsedRecipe }
+        return { success: true, data: object }
     } catch (error) {
         console.error("Error parsing recipe:", error)
         return { success: false, error: "Failed to parse recipe" }
@@ -132,46 +112,32 @@ export async function parseRecipeUrl(url: string) {
             .trim()
             .slice(0, 8000) // Limit to avoid token overflow
 
-        const prompt = `Extract recipe data from this web page text in JSON format.
-The JSON should match this schema:
-{
-  title: string,
-  description?: string,
-  prepTime?: number (minutes),
-  cookTime?: number (minutes),
-  servings?: number,
-  ingredients: {
-    name: string,
-    quantity: number,
-    unit: string (e.g. GRAM, CUP, PIECE, TABLESPOON, TEASPOON, KILOGRAM, MILLILITER, LITER, OUNCE, POUND, PINCH, TO_TASTE),
-    originalText: string,
-    category: string (one of: ${Object.keys(IngredientCategory).join(", ")})
-  }[],
-  steps: string[]
-}
+        const prompt = `Extract recipe data from this web page text.
 If unit or category is unclear, make a best guess or use defaults.
-Only return valid JSON, no markdown code fences.
 
 Web page text:
 ${textContent}`
 
         const session = await getServerSession(authOptions)
         const user = session?.user?.id
-            ? await db.user.findUnique({ where: { id: session.user.id }, select: { geminiApiKey: true } })
+            ? await db.user.findUnique({
+                where: { id: session.user.id },
+                select: { llmProvider: true, geminiApiKey: true, geminiModel: true, openaiApiKey: true, openaiModel: true, anthropicApiKey: true, anthropicModel: true }
+            })
             : null
 
-        const geminiModel = getGeminiModel(user?.geminiApiKey)
+        const llmClient = getLLMClient({
+            provider: (user?.llmProvider as any) || "gemini",
+            ...user
+        })
 
-        const result = await geminiModel.generateContent(prompt)
-        const aiResponse = await result.response
-        const text = aiResponse.text()
+        const { object } = await generateObject({
+            model: llmClient,
+            schema: recipeSchema,
+            prompt: prompt,
+        })
 
-        // Clean up markdown code blocks if present
-        const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim()
-        const json = JSON.parse(cleanedText)
-        const parsedRecipe = recipeSchema.parse(json)
-
-        return { success: true, data: parsedRecipe }
+        return { success: true, data: object }
     } catch (error) {
         console.error("Error parsing recipe URL:", error)
         const message =

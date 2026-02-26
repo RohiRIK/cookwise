@@ -64,7 +64,13 @@ model User {
   mealPlans     MealPlan[]
   shoppingLists ShoppingList[]
 
-  geminiApiKey String? @map(name: "gemini_api_key")
+  llmProvider     String? @default("gemini") @map(name: "llm_provider")
+  geminiApiKey    String? @map(name: "gemini_api_key")
+  geminiModel     String? @map(name: "gemini_model")
+  openaiApiKey    String? @map(name: "openai_api_key")
+  openaiModel     String? @map(name: "openai_model")
+  anthropicApiKey String? @map(name: "anthropic_api_key")
+  anthropicModel  String? @map(name: "anthropic_model")
 
   stripeCustomerId       String?            @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?            @unique @map(name: "stripe_subscription_id")
