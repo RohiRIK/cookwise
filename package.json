@@ -13,7 +13,7 @@
     "start": "next start",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
-    "test": "bun test",
+    "test": "bun test __tests__",
     "test:e2e": "playwright test",
     "preview": "next build && next start",
     "postinstall": "prisma generate"
@@ -55,7 +55,7 @@
     "@radix-ui/react-progress": "^1.0.2",
     "@radix-ui/react-radio-group": "^1.1.2",
     "@radix-ui/react-scroll-area": "^1.0.3",
-    "@radix-ui/react-select": "^1.2.1",
+    "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-separator": "^1.0.2",
     "@radix-ui/react-slider": "^1.1.1",
     "@radix-ui/react-slot": "^1.2.4",
