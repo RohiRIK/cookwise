@@ -1,4 +1,7 @@
-# CookWise Component Library
+---
+title: CookWise Component Library
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

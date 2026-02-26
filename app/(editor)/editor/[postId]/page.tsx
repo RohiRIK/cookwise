@@ -16,17 +16,18 @@ async function getPostForUser(postId: Post["id"], userId: User["id"]) {
 }
 
 interface EditorPageProps {
-  params: { postId: string }
+  params: Promise<{ postId: string }>
 }
 
 export default async function EditorPage({ params }: EditorPageProps) {
   const user = await getCurrentUser()
+  const { postId } = await params
 
   if (!user) {
     redirect(authOptions?.pages?.signIn || "/login")
   }
 
-  const post = await getPostForUser(params.postId, user.id)
+  const post = await getPostForUser(postId, user.id)
 
   if (!post) {
     notFound()

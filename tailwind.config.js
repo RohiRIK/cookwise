@@ -52,6 +52,15 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        kitchen: {
+          DEFAULT: "hsl(var(--kitchen))",
+          foreground: "hsl(var(--kitchen-foreground))",
+        },
+        pantry: {
+          low: "hsl(var(--pantry-low))",
+          out: "hsl(var(--pantry-out))",
+          in: "hsl(var(--pantry-in))",
+        },
       },
       borderRadius: {
         lg: `var(--radius)`,

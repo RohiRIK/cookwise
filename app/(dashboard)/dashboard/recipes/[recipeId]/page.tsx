@@ -14,14 +14,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 
 interface RecipePageProps {
-    params: {
+    params: Promise<{
         recipeId: string
-    }
+    }>
 }
 
 export async function generateMetadata({ params }: RecipePageProps): Promise<Metadata> {
+    const { recipeId } = await params
     const recipe = await db.recipe.findUnique({
-        where: { id: params.recipeId },
+        where: { id: recipeId },
         select: { title: true },
     })
 
@@ -38,8 +39,9 @@ export default async function RecipePage({ params }: RecipePageProps) {
         return null
     }
 
+    const { recipeId } = await params
     const recipe = await db.recipe.findUnique({
-        where: { id: params.recipeId },
+        where: { id: recipeId },
         include: {
             ingredients: {
                 include: {
@@ -80,6 +82,14 @@ export default async function RecipePage({ params }: RecipePageProps) {
                         Back
                     </Button>
                 </Link>
+                <div className="ml-auto">
+                    <Link href={`/dashboard/recipes/${recipeId}/cook`}>
+                        <Button>
+                            <ChefHat className="mr-2 size-4" />
+                            Cook This
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-3">

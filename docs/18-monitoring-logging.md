@@ -1,4 +1,7 @@
-# CookWise Monitoring & Logging Guide
+---
+title: CookWise Monitoring & Logging Guide
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

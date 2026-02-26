@@ -1,4 +1,7 @@
-# CookWise Pantry Management Guide
+---
+title: CookWise Pantry Management Guide
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

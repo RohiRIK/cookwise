@@ -1,4 +1,7 @@
-# CookWise Deployment Guide
+---
+title: CookWise Deployment Guide
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

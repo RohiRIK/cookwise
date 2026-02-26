@@ -1,4 +1,7 @@
-# CookWise Technical Specification
+---
+title: CookWise Technical Specification
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

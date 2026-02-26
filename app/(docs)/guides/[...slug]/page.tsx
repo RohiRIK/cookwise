@@ -15,10 +15,12 @@ import { env } from "@/env.mjs"
 import { absoluteUrl, cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
+interface GuidePageParams {
+  slug: string[]
+}
+
 interface GuidePageProps {
-  params: {
-    slug: string[]
-  }
+  params: Promise<GuidePageParams>
 }
 
 async function getGuideFromParams(params) {
@@ -35,7 +37,8 @@ async function getGuideFromParams(params) {
 export async function generateMetadata({
   params,
 }: GuidePageProps): Promise<Metadata> {
-  const guide = await getGuideFromParams(params)
+  const { slug } = await params
+  const guide = await getGuideFromParams({ slug })
 
   if (!guide) {
     return {}
@@ -74,16 +77,15 @@ export async function generateMetadata({
   }
 }
 
-export async function generateStaticParams(): Promise<
-  GuidePageProps["params"][]
-> {
+export async function generateStaticParams(): Promise<GuidePageParams[]> {
   return allGuides.map((guide) => ({
     slug: guide.slugAsParams.split("/"),
   }))
 }
 
 export default async function GuidePage({ params }: GuidePageProps) {
-  const guide = await getGuideFromParams(params)
+  const { slug } = await params
+  const guide = await getGuideFromParams({ slug })
 
   if (!guide) {
     notFound()

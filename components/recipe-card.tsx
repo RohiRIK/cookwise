@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Recipe } from "@prisma/client"
 import { Clock, ChefHat, Users } from "lucide-react"
 
@@ -16,10 +17,12 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
                 {/* Placeholder for now, replace with next/image when imageUrl is real */}
                 {recipe.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                         src={recipe.imageUrl}
                         alt={recipe.title}
-                        className="size-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                 ) : (
                     <div className="flex size-full items-center justify-center bg-secondary text-muted-foreground">

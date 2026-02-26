@@ -37,7 +37,8 @@ import {
 import { addPantryItem, updatePantryItem, PantryItemInput } from "@/app/actions/pantry"
 import { lookupProduct } from "@/app/actions/product-lookup"
 import { toast } from "@/components/ui/use-toast"
-import { BarcodeScanner } from "./barcode-scanner"
+import dynamic from "next/dynamic"
+const BarcodeScanner = dynamic(() => import("./barcode-scanner").then(mod => mod.BarcodeScanner), { ssr: false })
 
 // We need a separate schema for the form because ingredientId might be input directly or selected
 // For now, let's assume we simulate ingredient selection by just typing name (for MVP) 

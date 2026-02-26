@@ -1,4 +1,7 @@
-# Product Requirements Document: CookWise
+---
+title: "Product Requirements Document: CookWise"
+description: Kitchen-OS Documentation
+---
 
 | Metadata | Details |
 | :--- | :--- |
@@ -85,7 +88,7 @@ CookWise is a centralized web application designed to digitize and automate the 
 ### 3.3 Acceptance Criteria
 - **Recipe Parsing**: System must normalize ingredients (e.g., mapping "2 large tomatoes" to Item: "Tomato", Qty: 2, Unit: "Large", Category: "Produce").
 - **Smart Deduplication**: Shopping list generation must calculate (Recipe Requirements - Pantry Stock) to determine buy quantity.
-- **Real-time Sync**: When Partner A checks off an item on their phone, Partner B's screen must update within <1 second.
+- **Real-time Sync**: When Partner A checks off an item on their phone, Partner B's screen must update within &lt;1 second.
 - **Staples Logic**: Common items (salt, oil) must be hidden from the main list unless the "Show Staples" toggle is active.
 
 ### 3.4 Non-Goals

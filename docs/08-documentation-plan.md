@@ -1,4 +1,7 @@
-# CookWise Documentation Master Plan
+---
+title: CookWise Documentation Master Plan
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

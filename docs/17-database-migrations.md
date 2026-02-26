@@ -1,4 +1,7 @@
-# CookWise Database Migrations Guide
+---
+title: CookWise Database Migrations Guide
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

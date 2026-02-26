@@ -1,4 +1,7 @@
-# CookWise UI/UX User Flows
+---
+title: CookWise UI/UX User Flows
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

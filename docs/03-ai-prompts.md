@@ -1,4 +1,7 @@
-# CookWise AI Prompt Engineering Guide
+---
+title: CookWise AI Prompt Engineering Guide
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

@@ -13,10 +13,12 @@ import { Metadata } from "next"
 import { env } from "@/env.mjs"
 import { absoluteUrl } from "@/lib/utils"
 
+interface DocPageParams {
+  slug: string[]
+}
+
 interface DocPageProps {
-  params: {
-    slug: string[]
-  }
+  params: Promise<DocPageParams>
 }
 
 async function getDocFromParams(params) {
@@ -24,7 +26,7 @@ async function getDocFromParams(params) {
   const doc = allDocs.find((doc) => doc.slugAsParams === slug)
 
   if (!doc) {
-    null
+    return null
   }
 
   return doc
@@ -39,10 +41,10 @@ export async function generateMetadata({
     return {}
   }
 
-  const url = env.NEXT_PUBLIC_APP_URL
+  const url = process.env.NEXT_PUBLIC_APP_URL
 
   const ogUrl = new URL(`${url}/api/og`)
-  ogUrl.searchParams.set("heading", doc.description ?? doc.title)
+  ogUrl.searchParams.set("heading", doc.description || doc.title)
   ogUrl.searchParams.set("type", "Documentation")
   ogUrl.searchParams.set("mode", "dark")
 
@@ -72,16 +74,15 @@ export async function generateMetadata({
   }
 }
 
-export async function generateStaticParams(): Promise<
-  DocPageProps["params"][]
-> {
+export async function generateStaticParams(): Promise<DocPageParams[]> {
   return allDocs.map((doc) => ({
     slug: doc.slugAsParams.split("/"),
   }))
 }
 
 export default async function DocPage({ params }: DocPageProps) {
-  const doc = await getDocFromParams(params)
+  const { slug } = await params
+  const doc = await getDocFromParams({ slug })
 
   if (!doc) {
     notFound()

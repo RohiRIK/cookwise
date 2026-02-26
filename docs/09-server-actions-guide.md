@@ -1,4 +1,7 @@
-# CookWise Server Actions Guide
+---
+title: CookWise Server Actions Guide
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

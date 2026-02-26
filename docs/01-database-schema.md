@@ -1,4 +1,7 @@
-# CookWise Database Schema
+---
+title: CookWise Database Schema
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

@@ -1,4 +1,7 @@
-# CookWise Template Customization Guide
+---
+title: CookWise Template Customization Guide
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

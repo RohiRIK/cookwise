@@ -1,10 +1,10 @@
-import { defineDocumentType, makeSource } from "contentlayer/source-files"
+import { defineDocumentType, makeSource } from "contentlayer2/source-files"
 import rehypeAutolinkHeadings from "rehype-autolink-headings"
 import rehypePrettyCode from "rehype-pretty-code"
 import rehypeSlug from "rehype-slug"
 import remarkGfm from "remark-gfm"
 
-/** @type {import('contentlayer/source-files').ComputedFields} */
+/** @type {import('contentlayer2/source-files').ComputedFields} */
 const computedFields = {
   slug: {
     type: "string",
@@ -18,7 +18,7 @@ const computedFields = {
 
 export const Doc = defineDocumentType(() => ({
   name: "Doc",
-  filePathPattern: `docs/**/*.mdx`,
+  filePathPattern: `**/*.md`,
   contentType: "mdx",
   fields: {
     title: {
@@ -38,7 +38,7 @@ export const Doc = defineDocumentType(() => ({
 
 export const Guide = defineDocumentType(() => ({
   name: "Guide",
-  filePathPattern: `guides/**/*.mdx`,
+  filePathPattern: `content/guides/**/*.mdx`,
   contentType: "mdx",
   fields: {
     title: {
@@ -66,7 +66,7 @@ export const Guide = defineDocumentType(() => ({
 
 export const Post = defineDocumentType(() => ({
   name: "Post",
-  filePathPattern: `blog/**/*.mdx`,
+  filePathPattern: `content/blog/**/*.mdx`,
   contentType: "mdx",
   fields: {
     title: {
@@ -103,7 +103,7 @@ export const Post = defineDocumentType(() => ({
 
 export const Author = defineDocumentType(() => ({
   name: "Author",
-  filePathPattern: `authors/**/*.mdx`,
+  filePathPattern: `content/authors/**/*.mdx`,
   contentType: "mdx",
   fields: {
     title: {
@@ -127,7 +127,7 @@ export const Author = defineDocumentType(() => ({
 
 export const Page = defineDocumentType(() => ({
   name: "Page",
-  filePathPattern: `pages/**/*.mdx`,
+  filePathPattern: `content/pages/**/*.mdx`,
   contentType: "mdx",
   fields: {
     title: {
@@ -142,7 +142,7 @@ export const Page = defineDocumentType(() => ({
 }))
 
 export default makeSource({
-  contentDirPath: "./content",
+  contentDirPath: "docs",
   documentTypes: [Page, Doc, Guide, Post, Author],
   mdx: {
     remarkPlugins: [remarkGfm],
@@ -160,6 +160,9 @@ export default makeSource({
             }
           },
           onVisitHighlightedLine(node) {
+            if (!node.properties.className) {
+              node.properties.className = []
+            }
             node.properties.className.push("line--highlighted")
           },
           onVisitHighlightedWord(node) {

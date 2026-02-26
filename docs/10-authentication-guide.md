@@ -1,4 +1,7 @@
-# CookWise Authentication Guide
+---
+title: CookWise Authentication Guide
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

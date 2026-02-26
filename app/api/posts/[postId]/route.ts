@@ -13,21 +13,22 @@ const routeContextSchema = z.object({
 
 export async function DELETE(
   req: Request,
-  context: z.infer<typeof routeContextSchema>
+  context: { params: Promise<{ postId: string }> }
 ) {
   try {
+    const params = await context.params
     // Validate the route params.
-    const { params } = routeContextSchema.parse(context)
+    const { params: { postId } } = routeContextSchema.parse({ params })
 
     // Check if the user has access to this post.
-    if (!(await verifyCurrentUserHasAccessToPost(params.postId))) {
+    if (!(await verifyCurrentUserHasAccessToPost(postId))) {
       return new Response(null, { status: 403 })
     }
 
     // Delete the post.
     await db.post.delete({
       where: {
-        id: params.postId as string,
+        id: postId as string,
       },
     })
 
@@ -43,14 +44,15 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  context: z.infer<typeof routeContextSchema>
+  context: { params: Promise<{ postId: string }> }
 ) {
   try {
+    const params = await context.params
     // Validate route params.
-    const { params } = routeContextSchema.parse(context)
+    const { params: { postId } } = routeContextSchema.parse({ params })
 
     // Check if the user has access to this post.
-    if (!(await verifyCurrentUserHasAccessToPost(params.postId))) {
+    if (!(await verifyCurrentUserHasAccessToPost(postId))) {
       return new Response(null, { status: 403 })
     }
 
@@ -62,7 +64,7 @@ export async function PATCH(
     // TODO: Implement sanitization for content.
     await db.post.update({
       where: {
-        id: params.postId,
+        id: postId,
       },
       data: {
         title: body.title,

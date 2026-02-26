@@ -1,4 +1,7 @@
-# CookWise FAQ
+---
+title: CookWise FAQ
+description: Kitchen-OS Documentation
+---
 
 > **Product:** CookWise - The AI-Powered Kitchen Operating System  
 > **Domain:** cookwise.io  

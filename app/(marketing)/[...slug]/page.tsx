@@ -10,10 +10,12 @@ import { env } from "@/env.mjs"
 import { siteConfig } from "@/config/site"
 import { absoluteUrl } from "@/lib/utils"
 
+interface PageParams {
+  slug: string[]
+}
+
 interface PageProps {
-  params: {
-    slug: string[]
-  }
+  params: Promise<PageParams>
 }
 
 async function getPageFromParams(params) {
@@ -30,7 +32,8 @@ async function getPageFromParams(params) {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const page = await getPageFromParams(params)
+  const { slug } = await params
+  const page = await getPageFromParams({ slug })
 
   if (!page) {
     return {}
@@ -69,14 +72,15 @@ export async function generateMetadata({
   }
 }
 
-export async function generateStaticParams(): Promise<PageProps["params"][]> {
+export async function generateStaticParams(): Promise<PageParams[]> {
   return allPages.map((page) => ({
     slug: page.slugAsParams.split("/"),
   }))
 }
 
 export default async function PagePage({ params }: PageProps) {
-  const page = await getPageFromParams(params)
+  const { slug } = await params
+  const page = await getPageFromParams({ slug })
 
   if (!page) {
     notFound()

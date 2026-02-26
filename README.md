@@ -78,6 +78,7 @@ CookWise is a centralized web application designed to digitize and automate the 
 
 Detailed documentation is available in the `docs/` directory:
 
+-   [User Guide](docs/USER_GUIDE.md) - **New!**
 -   [Product Requirements (PRD)](docs/00-PRD.md)
 -   [Database Schema](docs/01-database-schema.md)
 -   [Technical Specification](docs/02-technical-spec.md)

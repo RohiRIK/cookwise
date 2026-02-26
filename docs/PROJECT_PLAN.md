@@ -1,4 +1,7 @@
-# CookWise Project Plan
+---
+title: CookWise Project Plan
+description: Kitchen-OS Documentation
+---
 
 **Goal**: Build an AI-Powered Kitchen Operating System that streamlines recipe management, pantry tracking, and meal planning.
 **Timeline**: estimated 8 weeks
@@ -79,10 +82,10 @@
 
 | Task ID | Task Name | Skill / Tech | Definition of Done |
 |:-------:|-----------|--------------|--------------------|
-| P4-T1 | **Drag-and-Drop Planner** | dnd-kit | Calendar view to schedule recipes for meal slots. |
-| P4-T2 | **Shopping List Gen** | Logic | Planner + Pantry delta = Shopping List. |
-| P4-T3 | **Shopping Mode** | PWA / Wake Lock | Mobile-first view with wake lock (User Flow Step 2). |
-| P4-T4 | **Cooking Mode** | PWA / Wake Lock | Step-by-step view with timers and voice controls. |
+| P4-T1 | **Drag-and-Drop Planner** | dnd-kit | Calendar view to schedule recipes for meal slots. (Done via `@dnd-kit`) |
+| P4-T2 | **Shopping List Gen** | Logic | Planner + Pantry delta = Shopping List. (Done) |
+| P4-T3 | **Shopping Mode** | PWA / Wake Lock | Mobile-first view with wake lock (User Flow Step 2). (Done) |
+| P4-T4 | **Cooking Mode** | PWA / Wake Lock | Step-by-step view with timers and voice controls. (Done) |
 
 ---
 
@@ -92,10 +95,10 @@
 
 | Task ID | Task Name | Skill / Tech | Definition of Done |
 |:-------:|-----------|--------------|--------------------|
-| P5-T1 | **UI/UX Audit** | `web-design-guidelines` | Full pass on all pages for consistency and a11y. |
-| P5-T2 | **Performance Tuning** | `vercel-react-best-practices` | Lighthouse score > 90, eliminate waterfall requests. |
-| P5-T3 | **End-to-End Testing** | Playwright | Critical flows (Auth -> Cook -> Shop) verified. |
-| P5-T4 | **Documentation** | `documentation-engineer` | Final logic documentation and user guides. |
+| P5-T1 | **UI/UX Audit** | `web-design-guidelines` | Full pass on all pages for consistency and a11y. (Done) |
+| P5-T2 | **Performance Tuning** | `vercel-react-best-practices` | Lighthouse score > 90, eliminate waterfall requests. (Done) |
+| P5-T3 | **End-to-End Testing** | Playwright | Critical flows (Auth -> Cook -> Shop) verified. (Done) |
+| P5-T4 | **Documentation** | `documentation-engineer` | Final logic documentation and user guides. (Done) |
 
 ---
 

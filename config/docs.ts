@@ -17,118 +17,74 @@ export const docsConfig: DocsConfig = {
       items: [
         {
           title: "Introduction",
-          href: "/docs",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      items: [
-        {
-          title: "Introduction",
           href: "/docs/documentation",
         },
         {
-          title: "Contentlayer",
-          href: "/docs/in-progress",
-          disabled: true,
+          title: "Development Setup",
+          href: "/docs/development-setup",
         },
         {
-          title: "Components",
-          href: "/docs/documentation/components",
+          title: "Database Schema",
+          href: "/docs/database-schema",
         },
         {
-          title: "Code Blocks",
-          href: "/docs/documentation/code-blocks",
-        },
-        {
-          title: "Style Guide",
-          href: "/docs/documentation/style-guide",
-        },
-        {
-          title: "Search",
-          href: "/docs/in-progress",
-          disabled: true,
+          title: "Technical Spec",
+          href: "/docs/technical-spec",
         },
       ],
     },
     {
-      title: "Blog",
+      title: "Core Features",
       items: [
         {
-          title: "Introduction",
-          href: "/docs/in-progress",
-          disabled: true,
+          title: "Recipe Management",
+          href: "/docs/recipe-management",
         },
         {
-          title: "Build your own",
-          href: "/docs/in-progress",
-          disabled: true,
+          title: "Pantry Management",
+          href: "/docs/pantry-management",
         },
         {
-          title: "Writing Posts",
-          href: "/docs/in-progress",
-          disabled: true,
+          title: "Meal Planning",
+          href: "/docs/meal-planning",
+        },
+        {
+          title: "Shopping List",
+          href: "/docs/shopping-list",
         },
       ],
     },
     {
-      title: "Dashboard",
+      title: "Guides",
       items: [
-        {
-          title: "Introduction",
-          href: "/docs/in-progress",
-          disabled: true,
-        },
-        {
-          title: "Layouts",
-          href: "/docs/in-progress",
-          disabled: true,
-        },
-        {
-          title: "Server Components",
-          href: "/docs/in-progress",
-          disabled: true,
-        },
         {
           title: "Authentication",
-          href: "/docs/in-progress",
-          disabled: true,
+          href: "/docs/authentication-guide",
         },
         {
-          title: "Database with Prisma",
-          href: "/docs/in-progress",
-          disabled: true,
+          title: "AI Integration",
+          href: "/docs/ai-integration-guide",
         },
         {
-          title: "API Routes",
-          href: "/docs/in-progress",
-          disabled: true,
+          title: "Server Actions",
+          href: "/docs/server-actions-guide",
         },
       ],
     },
     {
-      title: "Marketing Site",
+      title: "Reference",
       items: [
         {
-          title: "Introduction",
-          href: "/docs/in-progress",
-          disabled: true,
+          title: "API Reference",
+          href: "/docs/api-reference",
         },
         {
-          title: "File Structure",
-          href: "/docs/in-progress",
-          disabled: true,
+          title: "Component Library",
+          href: "/docs/component-library",
         },
         {
-          title: "Tailwind CSS",
-          href: "/docs/in-progress",
-          disabled: true,
-        },
-        {
-          title: "Typography",
-          href: "/docs/in-progress",
-          disabled: true,
+          title: "PRD",
+          href: "/docs/prd",
         },
       ],
     },
