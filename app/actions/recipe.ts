@@ -10,19 +10,21 @@ import { z } from "zod"
 import { IngredientCategory, RecipeSourceType, UnitType } from "@prisma/client"
 
 const recipeSchema = z.object({
-    title: z.string(),
-    description: z.string().optional(),
-    prepTime: z.number().optional(),
-    cookTime: z.number().optional(),
-    servings: z.number().optional(),
+    title: z.string().describe("The primary title of the recipe."),
+    description: z.string().optional().describe("A short summary or description of the recipe."),
+    prepTime: z.number().optional().describe("Preparation time in minutes."),
+    cookTime: z.number().optional().describe("Cooking time in minutes."),
+    servings: z.number().optional().describe("Number of servings the recipe makes."),
     ingredients: z.array(z.object({
-        name: z.string(),
-        quantity: z.number(),
-        unit: z.string(),
-        originalText: z.string(),
-        category: z.nativeEnum(IngredientCategory).default(IngredientCategory.OTHER),
-    })),
-    steps: z.array(z.string()),
+        name: z.string().describe("Cleaned ingredient name (e.g., 'onions' instead of '2 cups chopped onions')."),
+        quantity: z.number().describe("The numerical quantity. Convert fractions to decimals."),
+        unit: z.string().describe("The measurement unit. MUST be exactly one of: PIECE, GRAM, KILOGRAM, MILLILITER, LITER, CUP, TABLESPOON, TEASPOON, OUNCE, POUND, PINCH, TO_TASTE. If unstated or implied (like '3 carrots'), use 'PIECE'. Strongly attempt to translate foreign or loose units (like 'grams', 'tbsp', 'יחידות', 'גרם') into these exact uppercase strings."),
+        originalText: z.string().describe("The exact original text of the ingredient line as it appeared in the source."),
+        category: z.nativeEnum(IngredientCategory)
+            .default(IngredientCategory.OTHER)
+            .describe("The logical grocery category. MUST be one of: PRODUCE, DAIRY, MEAT, SEAFOOD, GRAINS, CANNED, SPICES, OILS, BAKING, BEVERAGES, FROZEN, CONDIMENTS, OTHER."),
+    })).describe("List of all ingredients required."),
+    steps: z.array(z.string()).describe("Sequential instructions to prepare the recipe. Each string is one distinct step."),
 })
 
 export type RecipeInput = z.infer<typeof recipeSchema>
@@ -58,7 +60,7 @@ export async function parseRecipeImage(formData: FormData) {
                 {
                     role: "user",
                     content: [
-                        { type: "text", text: "Extract recipe data from this image. If unit or category is unclear, make a best guess or use defaults." },
+                        { type: "text", text: "Extract recipe data from this image. You are an expert culinary assistant.\n1. Clean up ingredient names (e.g., if original is '2 cups of freshly chopped onions', name is 'onions').\n2. Accurately convert measurements to the closest provided UnitType enum. If a unit is implied but not stated (like '3 carrots'), use 'PIECE'.\n3. Assign the most logical grocery Category.\n4. Translate any non-English units/categories into the exact uppercase English ENUM values requested in the schema." },
                         { type: "image", image: arrayBuffer }
                     ]
                 }
@@ -112,8 +114,11 @@ export async function parseRecipeUrl(url: string) {
             .trim()
             .slice(0, 8000) // Limit to avoid token overflow
 
-        const prompt = `Extract recipe data from this web page text.
-If unit or category is unclear, make a best guess or use defaults.
+        const prompt = `Extract recipe data from this web page text. You are an expert culinary assistant.
+1. Clean up ingredient names (e.g., if original is "2 cups of freshly chopped onions", name is "onions").
+2. Accurately convert measurements to the closest provided UnitType enum. If a unit is implied but not stated (like "3 carrots"), use "PIECE".
+3. Assign the most logical grocery Category.
+4. Translate any non-English units/categories into the exact uppercase English ENUM values requested in the schema.
 
 Web page text:
 ${textContent}`
