@@ -91,13 +91,25 @@ export function RecipeForm() {
             prepTime: data.prepTime || 0,
             cookTime: data.cookTime || 0,
             servings: data.servings || 4,
-            ingredients: data.ingredients.map(i => ({
-                ...i,
-                // Ensure defaults for enums if AI missed them
-                unit: i.unit as UnitType || UnitType.PIECE,
-                category: i.category as IngredientCategory || IngredientCategory.OTHER,
-                originalText: i.originalText || ""
-            })),
+            ingredients: data.ingredients.map(i => {
+                const upperUnit = String(i.unit || "").toUpperCase()
+                const upperCategory = String(i.category || "").toUpperCase()
+
+                const safeUnit = Object.values(UnitType).includes(upperUnit as UnitType)
+                    ? (upperUnit as UnitType)
+                    : UnitType.PIECE
+
+                const safeCategory = Object.values(IngredientCategory).includes(upperCategory as IngredientCategory)
+                    ? (upperCategory as IngredientCategory)
+                    : IngredientCategory.OTHER
+
+                return {
+                    ...i,
+                    unit: safeUnit,
+                    category: safeCategory,
+                    originalText: i.originalText || ""
+                }
+            }),
             steps: data.steps.map(s => ({ value: s }))
         })
     }
